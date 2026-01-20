@@ -1,0 +1,15 @@
+# --- ARCHIVOS DE DATOS Y MODELOS (Pesados) ---
+*.csv
+*.tsv
+*.json
+final_model/
+dataset_entrenamiento/
+datos_test_originales/
+
+# --- ARCHIVOS TEMPORALES Y BORRADORES ---
+web_app
+
+
+# --- CONFIGURACIÓN Y EJECUTABLES ---
+run_app.bat
+config.py
