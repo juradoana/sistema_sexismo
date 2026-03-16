@@ -1,45 +1,38 @@
-# ============================================
-# DATOS Y MODELOS (archivos pesados)
-# ============================================
+# --- ARCHIVOS DE DATOS Y MODELOS (Pesados) ---
+*.csv
+*.tsv
+*.json
 final_model/
 dataset_entrenamiento/
 datos_test_originales/
 
-# CSVs, TSVs y JSONs de datos (pesados)
-*.csv
-*.tsv
-EXIST*.json
-
-# Excepción: métricas de resumen (son pequeños y útiles)
-!metricas_resumen_*.csv
-
-# ============================================
-# ARCHIVOS CON CREDENCIALES (¡NO subir!)
-# ============================================
+# --- CONFIGURACIÓN Y EJECUTABLES ---
 config.py
 personal_config.yaml
-
-# ============================================
-# BINARIOS Y SCRIPTS PERSONALES
-# ============================================
-ngrok.exe
 run_app.bat
 run_ngrok.bat
+ngrok.exe
 
-# ============================================
-# MATERIAL NO RELACIONADO
-# ============================================
+# --- MATERIAL NO RELACIONADO O INVESTIGACIÓN ---
+# (Se excluyen porque solo queremos subir la web_app)
+encoder/
+estrategias/
+modelos/
+evaluaciones/
+graficas/
 temario_fis/
+detector_basico.py
+dataset_limpio.py
+limpiar_test.py
+unir_datos.py
+unir_datos_test.py
+contar.py
+sistema_basico.py
+config.example.py
+plan_pruebas.tex
 
-# ============================================
-# CACHÉS Y ARCHIVOS TEMPORALES
-# ============================================
+# --- CACHÉS Y TEMPORALES ---
 __pycache__/
-*.pyc
-*.pyo
 .pytest_cache/
-*.egg-info/
-dist/
-build/
 .env
 .venv/

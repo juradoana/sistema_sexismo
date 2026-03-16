@@ -35,8 +35,7 @@ def load_resources():
             config = OmegaConf.load(CONFIG_PATH)
             api_key = config.llm_api.api_key
             model_name = config.llm_api.model
-            base_url = config.llm_api.get("base_url", "http://ada01.ujaen.es:8080/v1")
-            llm_api = LLMApi(api_key, model_name, base_url)
+            llm_api = LLMApi(api_key, model_name)
             print("LLM API Initializado")
         else:
             print(f"Archivo de configuración no encontrado en {CONFIG_PATH}")
