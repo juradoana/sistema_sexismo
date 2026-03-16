@@ -14,10 +14,9 @@ import re
 from lingua import Language, LanguageDetectorBuilder
 
 
-# Mantenemos el detector de español (útil para filtrar spam)
+# mantenemos el detector de español 
 class LinguaSpanishDetector:
     def __init__(self):
-        # Instalar: pip install lingua-language-detector
         from lingua import Language, LanguageDetectorBuilder
         self.detector = LanguageDetectorBuilder.from_languages(
             Language.SPANISH, Language.ENGLISH, Language.FRENCH, 
@@ -34,19 +33,19 @@ class LinguaSpanishDetector:
         if not text or len(text) < 20:
             return False
         
-        # Limpieza básica
+        # limpieza básica
         text_clean = re.sub(r'[^\w\sáéíóúñü]', '', text.lower())
         
-        # Heurística rápida: si tiene ñ o tildes, es probablemente español
+        # heurística rápida: si tiene ñ o tildes, es probablemente español
         if any(c in text for c in 'ñáéíóú'):
             return True
         
-        # Verificar si tiene palabras comunes en español
+        # verificar si tiene palabras comunes en español
         words = set(text_clean.split())
         if len(words.intersection(self.spanish_indicators)) > 3:
             return True
         
-        # Lingua detector como backup, para evitar falsos positivos 
+        # lingua detector como backup, para evitar falsos positivos 
         confidence = self.detector.compute_language_confidence(text, Language.SPANISH)
         return confidence > confidence_threshold # devuelve un número entre 0 y 1 que indica la confianza en que es español
 
@@ -59,27 +58,27 @@ class SexismoAnnotator:
         :param config_path: Ruta a personal_config.yaml
         :param input_csv: Ruta al CSV limpio (EXIST2021_limpio.csv)
         """
-        # Cargar configuración desde el archivo personal_config.yaml
+        # cargar configuración desde el archivo personal_config.yaml
         self.config = OmegaConf.load(config_path)
         self.api_key = self.config.llm_api.api_key
         self.model = self.config.llm_api.model
         
-        # Inicializar LLM (usando tu LLMApi)
+        # inicializar LLM (usando tu LLMApi)
         self.llm = LLMApi(api_key=self.api_key, model=self.model)
         
-        # Archivos de entrada/salida
+        # archivos de entrada/salida
         self.input_csv = input_csv
         self.output_folder = os.path.dirname(input_csv) 
         self.output_csv = os.path.join(self.output_folder, "salida_EXIST_anotado_final.csv")
         
-        # Logging para mostrar mensajes informativos, advertencias y errores
+        # logging para mostrar mensajes informativos, advertencias y errores
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s'
         )
         self.logger = logging.getLogger(__name__)
         
-        # Prompt SYSTEM para sexismo 
+        # prompt SYSTEM para sexismo 
         self.prompt = """Eres un experto en análisis de discurso sexista y misógino en redes sociales.
         Tu tarea es clasificar si un tweet es **sexista** o **no sexista**.
         
@@ -116,10 +115,10 @@ class SexismoAnnotator:
         }
         """
         
-        # Detector de español (opcional pero útil)
+        # detector de español
         self.spanish_detector = LinguaSpanishDetector()
         
-        # Lock para escritura segura en paralelo
+        # lock para escritura segura en paralelo
         self.write_lock = Lock()
         
     def annotate_tweet(self, text: str, tweet_id: str, max_retries: int = 3) -> dict:
@@ -127,14 +126,14 @@ class SexismoAnnotator:
         Llama al LLM para clasificar un tweet.
         Devuelve: {"sexista": bool, "razones": str}
         """
-        if not text or len(text.strip()) < 5: #filtrar textos vacíos o muy cortos, si es así devuelve error
+        if not text or len(text.strip()) < 5: # filtrar textos vacíos o muy cortos, si es así devuelve error
             return {
                 "sexista": None,
                 "razones": "Texto vacío o muy corto",
                 "error": "Texto inválido"
             }
         
-        # Verificar si es español (opcional, para filtrar ruido)
+        # verificar si es español 
         '''if not self.spanish_detector.is_spanish(text):
             return {
                 "sexista": None,
@@ -149,14 +148,14 @@ class SexismoAnnotator:
         # se hace hasta 3 intentos, por si hay error de red o el LLM no responde bien
         for attempt in range(max_retries):
             try:
-                # Llamada al LLM usando LLMApi.send_request (igual que tag_comment)
+                # llamada al LLM usando LLMApi.send_request (igual que tag_comment)
                 raw_response = self.llm.send_request(chat=chat, max_tokens=150, temperature=0.1)
                 response_text = raw_response.json()["choices"][0]["message"]["content"]
                 
-                # Parsear JSON con json_repair (pq el modelo a veces lo genera con fallos)
+                # parsear JSON con json_repair (pq el modelo a veces lo genera con fallos)
                 parsed = json_repair.loads(response_text)
                 
-                # Validar estructura
+                # validar estructura
                 if "sexista" in parsed and "razones" in parsed:
                     return {
                         "sexista": bool(parsed["sexista"]),
@@ -175,7 +174,7 @@ class SexismoAnnotator:
                     }
                 time.sleep(1)  # Esperar antes de reintentar
     
-    # Método para evitar tweets repetidos    
+    # para evitar tweets repetidos    
     def get_existing_ids(self) -> set:
         """Obtiene IDs de tweets ya procesados para no repetir."""
         if not os.path.exists(self.output_csv): # si no existe el archivo de salida, devuelve conjunto vacío
@@ -223,7 +222,7 @@ class SexismoAnnotator:
         
         # 3. Procesar en paralelo
         with ThreadPoolExecutor(max_workers=max_workers) as executor: #crea el ejecutor de hilos 
-            # Submit tareas
+            # submit tareas
             future_to_tweet = { #lanza las tareas en paralelo
                 executor.submit(self.annotate_tweet, tw['text'], tw['tweet_id']): tw #coge la función y los argumentos del tweet, y lanza esa tarea en uno de los hilos disponibles 
                 for tw in tweets_to_process
@@ -240,17 +239,17 @@ class SexismoAnnotator:
                 fieldnames = ['tweet_id', 'text', 'true_label', 'pred_sexista', 'pred_razones', 'error']
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 
-                # Escribir header solo si archivo nuevo
+                # escribir header solo si archivo nuevo
                 if not existing_ids:
                     writer.writeheader()
                 
-                # Procesar resultados con barra de progreso
+                # procesar resultados con barra de progreso
                 for future in tqdm(as_completed(future_to_tweet), total=len(tweets_to_process), desc="Clasificando"): # tqdm para barra de progreso
                     tweet = future_to_tweet[future] #va recogiendo los resultados a medida que se van completando 
                     try:
                         result = future.result() # espera a que esa tarea termine y recoge el resultado
                         
-                        # Escribir inmediatamente (thread-safe)
+                        # escribir inmediatamente (thread-safe)
                         with self.write_lock: # asegura que solo un hilo escribe a la vez
                             writer.writerow({
                                 'tweet_id': tweet['tweet_id'],
@@ -277,14 +276,14 @@ class SexismoAnnotator:
         
         self.logger.info(f"Procesamiento completado. Resultados en {self.output_csv}")
 
-# =============== EJECUCIÓN ===============
+#  EJECUCIÓN 
 if __name__ == "__main__":
     # Configuración
     CONFIG_PATH = "personal_config.yaml"  # Debe tener llm_api.api_key y llm_api.model
-    INPUT_CSV = "dataset_entrenamiento/EXIST_Unificado_ES_limpio_final.csv"    # Tu archivo limpio
+    #INPUT_CSV = "dataset_entrenamiento/EXIST_Unificado_ES_limpio_final.csv"    
+    INPUT_CSV = "datos_test_originales/test_limpio.csv"    
     
     # Crear anotador
     annotator = SexismoAnnotator(config_path=CONFIG_PATH, input_csv=INPUT_CSV)
     
-    # Ejecutar con 4 workers (ajusta según tu CPU)
     annotator.process_tweets(max_workers=4)

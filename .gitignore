@@ -1,15 +1,45 @@
-# --- ARCHIVOS DE DATOS Y MODELOS (Pesados) ---
-*.csv
-*.tsv
-*.json
+# ============================================
+# DATOS Y MODELOS (archivos pesados)
+# ============================================
 final_model/
 dataset_entrenamiento/
 datos_test_originales/
 
-# --- ARCHIVOS TEMPORALES Y BORRADORES ---
-web_app
+# CSVs, TSVs y JSONs de datos (pesados)
+*.csv
+*.tsv
+EXIST*.json
 
+# Excepción: métricas de resumen (son pequeños y útiles)
+!metricas_resumen_*.csv
 
-# --- CONFIGURACIÓN Y EJECUTABLES ---
-run_app.bat
+# ============================================
+# ARCHIVOS CON CREDENCIALES (¡NO subir!)
+# ============================================
 config.py
+personal_config.yaml
+
+# ============================================
+# BINARIOS Y SCRIPTS PERSONALES
+# ============================================
+ngrok.exe
+run_app.bat
+run_ngrok.bat
+
+# ============================================
+# MATERIAL NO RELACIONADO
+# ============================================
+temario_fis/
+
+# ============================================
+# CACHÉS Y ARCHIVOS TEMPORALES
+# ============================================
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.env
+.venv/

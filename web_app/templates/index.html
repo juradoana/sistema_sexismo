@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Sexismo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Font Awesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-shapes">
+                <div class="header-shape header-shape--1"></div>
+                <div class="header-shape header-shape--2"></div>
+                <div class="header-shape header-shape--3"></div>
+            </div>
+            <div class="header-title-row">
+                <div class="header-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
+                <h1>Detector de Sexismo</h1>
+            </div>
+            <div class="header-divider"></div>
+            <p class="subtitle">
+                <span class="subtitle-badge">Herramienta para identificar discurso sexista y proponer alternativas
+                    respetuosas</span>
+            </p>
+        </header>
+
+
+        <main>
+            <div class="card input-card">
+                <div class="card-header">
+                    <h2><i class="fa-regular fa-comment-dots"></i> Analizar Texto</h2>
+                    <button type="button" class="help-icon-btn" id="HelpBtn" aria-label="Ver ejemplos de frases">
+                        <i class="fa-solid fa-circle-question"></i>
+                    </button>
+                </div>
+                <div class="help-tooltip" id="HelpTooltip">
+                    <div class="help-tooltip__header">
+                        <i class="fa-solid fa-lightbulb"></i> Ejemplos de frases para analizar
+                    </div>
+                    <ul class="help-tooltip__list">
+                        <li class="help-tooltip__item">
+                            <i class="fa-solid fa-quote-left"></i>
+                            Las mujeres deberían quedarse en casa cuidando a los hijos.
+                        </li>
+                        <li class="help-tooltip__item">
+                            <i class="fa-solid fa-quote-left"></i>
+                            Conduce muy bien para ser mujer.
+                        </li>
+                        <li class="help-tooltip__item">
+                            <i class="fa-solid fa-quote-left"></i>
+                            Todos los puestos de trabajo son dignos.
+                        </li>
+                        <li class="help-tooltip__item">
+                            <i class="fa-solid fa-quote-left"></i>
+                            Eso no es trabajo para una mujer.
+                        </li>
+                        <li class="help-tooltip__item">
+                            <i class="fa-solid fa-quote-left"></i>
+                            Todos merecen las mismas oportunidades independientemente de su género.
+                        </li>
+                    </ul>
+                    <p class="help-tooltip__hint">Haz clic en un ejemplo para usarlo</p>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="TextInput">Introduce una frase o comentario:</label>
+                        <textarea id="TextInput" rows="4" placeholder="Escribe aquí el texto a analizar..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estrategia de Explicación:</label>
+                        <input type="hidden" id="StrategySelect" value="0-shot">
+                        <div class="custom-select" id="CustomSelect">
+                            <button type="button" class="custom-select__trigger" id="SelectTrigger">
+                                <span class="custom-select__text">Zero-shot</span>
+                                <i class="fa-solid fa-chevron-down custom-select__arrow"></i>
+                            </button>
+                            <div class="custom-select__options" id="SelectOptions">
+                                <div class="custom-select__option selected" data-value="0-shot" data-label="Zero-shot"
+                                    data-desc="Sin ejemplos previos">
+                                    <i class="fa-solid fa-check custom-select__check"></i>
+                                    <div class="custom-select__option-text">
+                                        <span class="custom-select__label">Zero-shot</span>
+                                        <span class="custom-select__desc">Sin ejemplos previos</span>
+                                    </div>
+                                </div>
+                                <div class="custom-select__option" data-value="1-shot" data-label="One-shot"
+                                    data-desc="Un ejemplo de referencia">
+                                    <i class="fa-solid fa-check custom-select__check"></i>
+                                    <div class="custom-select__option-text">
+                                        <span class="custom-select__label">One-shot</span>
+                                        <span class="custom-select__desc">Un ejemplo de referencia</span>
+                                    </div>
+                                </div>
+                                <div class="custom-select__option" data-value="few-shot" data-label="Few-shot"
+                                    data-desc="Varios ejemplos de referencia">
+                                    <i class="fa-solid fa-check custom-select__check"></i>
+                                    <div class="custom-select__option-text">
+                                        <span class="custom-select__label">Few-shot</span>
+                                        <span class="custom-select__desc">Varios ejemplos de referencia</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <small>Determina cómo se le pide al modelo que genere la explicación.</small>
+                    </div>
+
+                    <button id="AnalyzeBtn" class="btn-primary">
+                        <span id="BtnText">Analizar Texto</span>
+                        <div id="BtnSpinner" class="spinner hidden"></div>
+                    </button>
+                    <div id="ErrorMessage" class="error-message hidden"></div>
+                </div>
+            </div>
+
+            <div id="ResultSection" class="result-section hidden">
+                <div class="card result-card">
+                    <div class="card-header">
+                        <h2>Resultado del Análisis</h2>
+                        <div id="BadgeLabel" class="badge"></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="result-metric">
+                            <span class="label">Confianza del modelo:</span>
+                            <div class="progress-bar-container">
+                                <div id="ConfidenceBar" class="progress-bar"></div>
+                            </div>
+                            <span id="ConfidenceValue" class="value">0%</span>
+                        </div>
+
+                        <!-- contenido para cuando se detecta contenido sexista -->
+                        <div id="SexistContent" class="hidden">
+                            <div class="info-block explanation">
+                                <h3><i class="fa-solid fa-magnifying-glass"></i> ¿Por qué es sexista?</h3>
+                                <p id="ExplanationText">Cargando explicación...</p>
+                            </div>
+
+                            <div class="info-block counter-narrative">
+                                <h3><i class="fa-solid fa-comment-medical"></i> Contranarrativa Sugerida</h3>
+                                <p id="CounterNarrativeText">Generando sugerencia...</p>
+                            </div>
+                        </div>
+
+                        <!-- contenido para cuando no se detecta contenido sexista -->
+                        <div id="NonSexistContent" class="hidden">
+                            <div class="success-message">
+                                <i class="fa-regular fa-circle-check"></i>
+                                <p>El modelo no ha detectado contenido sexista en esta frase.</p>
+                            </div>
+                            <div class="info-block non-sexist-explanation">
+                                <h3><i class="fa-solid fa-lightbulb"></i> ¿Por qué no es sexista?</h3>
+                                <p id="NonSexistExplanationText">Cargando explicación...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p><i class="fa-solid fa-graduation-cap"></i> Grupo SINAI — Universidad de Jaén</p>
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>

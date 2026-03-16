@@ -1,0 +1,15 @@
+# Copia este archivo como personal_config.yaml y rellena con tus credenciales
+#
+# ELIGE UNA OPCIÓN:
+#
+# --- Opción A: Servidor UJA (solo red universitaria) ---
+# llm_api:
+#   api_key: "TU_API_KEY_DE_LA_UJA"
+#   model: "/mnt/beegfs/sinai-data/google/gemma-3-12b-it"
+#   base_url: "http://ada01.ujaen.es:8080/v1"
+#
+# --- Opción B: Google AI Studio (gratuito, abierto a todos) ---
+llm_api:
+  api_key: "TU_API_KEY_DE_GOOGLE"
+  model: "gemma-3-12b-it"
+  base_url: "https://generativelanguage.googleapis.com/v1beta/openai"

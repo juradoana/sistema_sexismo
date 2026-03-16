@@ -88,10 +88,10 @@ class LLMApi:
             test_embedding = self.client.embeddings.create(input="test", model=self.model)
             # Calculamos la longitud del vector resultante
             dimension = len(test_embedding.data[0].embedding)
-            print(f"✅ Dimensión del modelo '{self.model}' detectada: {dimension}")
+            print(f" Dimensión del modelo '{self.model}' detectada: {dimension}")
             return dimension
         except Exception as e:
-            print(f"❌ Error crítico al obtener la dimensión del embedding: {e}")
+            print(f" Error crítico al obtener la dimensión del embedding: {e}")
             # Si esto falla, no podemos continuar de forma segura.
             # Puedes establecer un valor por defecto si lo prefieres.
             raise ValueError("No se pudo determinar la dimensión del modelo de embedding.") from e

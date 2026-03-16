@@ -2,10 +2,10 @@ import pandas as pd
 import os
 
 # Nombre de tu archivo de test
-test_file = 'datos_test_originales/test_limpio.csv'
+test_file = 'dataset_entrenamiento/EXIST_Unificado_ES_limpio_final.csv'
 
 if not os.path.exists(test_file):
-    print(f"❌ Error: No encuentro el archivo '{test_file}'")
+    print(f" Error: No encuentro el archivo '{test_file}'")
     exit()
 
 try:
@@ -21,14 +21,14 @@ try:
             break
             
     if not target_col:
-        print(f"⚠️ No encuentro una columna de etiqueta clara. Columnas disponibles: {list(df.columns)}")
+        print(f" No encuentro una columna de etiqueta clara. Columnas disponibles: {list(df.columns)}")
         # Intentamos usar la segunda columna si no encontramos nombre conocido
         if len(df.columns) >= 2:
             target_col = df.columns[1]
             print(f"   -> Usando '{target_col}' por defecto.")
 
     if target_col:
-        print(f"📊 Análisis de '{test_file}' (Total: {len(df)} filas)")
+        print(f" Análisis de '{test_file}' (Total: {len(df)} filas)")
         print("-" * 40)
         
         counts = df[target_col].value_counts()
@@ -42,10 +42,10 @@ try:
         
         # Alerta si hay desbalanceo extremo (>90% de una clase)
         if percents.max() > 90:
-            print("⚠️ ALERTA: Tu test está MUY desbalanceado (casi todo es de una clase).")
+            print(" ALERTA: Tu test está MUY desbalanceado (casi todo es de una clase).")
             print("   Esto explica por qué los modelos base dan 0% o 99%.")
         else:
-            print("✅ El balance parece razonable para evaluar.")
+            print(" El balance parece razonable para evaluar.")
             
 except Exception as e:
-    print(f"❌ Error leyendo el CSV: {e}")
+    print(f" Error leyendo el CSV: {e}")

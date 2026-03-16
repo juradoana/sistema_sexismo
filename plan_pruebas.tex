@@ -1,0 +1,99 @@
+% ============================================================
+% PLAN DE PRUEBAS DE SOFTWARE
+% ============================================================
+% Incluir en la memoria con: \input{plan_pruebas.tex}
+% ============================================================
+
+\subsection{Pruebas de Software}
+
+Además de la evaluación de los modelos de inteligencia artificial mediante métricas de aprendizaje automático (Accuracy, F1-Macro, matrices de confusión), se ha llevado a cabo un plan de pruebas del software para garantizar la calidad y robustez del código de la aplicación. Las pruebas se clasifican en tres niveles según su alcance: pruebas unitarias, pruebas de integración y pruebas de sistema.
+
+Las pruebas automatizadas se implementaron mediante el framework \textbf{pytest}, ampliamente utilizado en el ecosistema Python, y se localizan en el directorio \texttt{web\_app/tests/}. Para las pruebas de integración se empleó el cliente de pruebas integrado de Flask (\texttt{app.test\_client()}), que permite simular peticiones HTTP sin necesidad de un servidor en ejecución.
+
+\subsubsection{Pruebas Unitarias}
+
+Las pruebas unitarias verifican el correcto funcionamiento de funciones y clases individuales de forma aislada, independientemente del resto del sistema.
+
+\begin{table}[H]
+\centering
+\caption{Pruebas unitarias implementadas}
+\label{tab:pruebas-unitarias}
+\begin{tabular}{|l|p{4cm}|p{5.5cm}|}
+\hline
+\textbf{ID} & \textbf{Componente} & \textbf{Descripción} \\ \hline
+
+PU-01 & \texttt{get\_sexism\_explanation\_prompt()} & Verifica que el prompt generado para la estrategia zero-shot contiene el rol de sistema adecuado (``experto en lingüística'') y el texto del usuario. \\ \hline
+
+PU-02 & \texttt{get\_sexism\_explanation\_prompt()} & Verifica que el prompt para la estrategia one-shot incluye exactamente un ejemplo demostrativo además de la instrucción. \\ \hline
+
+PU-03 & \texttt{get\_sexism\_explanation\_prompt()} & Verifica que el prompt para la estrategia few-shot incluye múltiples ejemplos demostrativos. \\ \hline
+
+PU-04 & \texttt{get\_non\_sexism\_explanation\_prompt()} & Verifica que los prompts para textos no sexistas utilizan el campo JSON \texttt{explicacion\_no\_sexista} en el formato de salida. \\ \hline
+
+PU-05 & \texttt{LLMApi.\_\_init\_\_()} & Verifica que la clase \texttt{LLMApi} lanza una excepción \texttt{ValueError} si no se proporciona una clave API válida. \\ \hline
+
+\end{tabular}
+\end{table}
+
+\subsubsection{Pruebas de Integración}
+
+Las pruebas de integración verifican la correcta comunicación entre los distintos componentes del sistema: el servidor Flask, el módulo de clasificación y el módulo de generación.
+
+\begin{table}[H]
+\centering
+\caption{Pruebas de integración implementadas}
+\label{tab:pruebas-integracion}
+\begin{tabular}{|l|p{4cm}|p{5.5cm}|}
+\hline
+\textbf{ID} & \textbf{Componente} & \textbf{Descripción} \\ \hline
+
+PI-01 & \texttt{POST /api/analyze} & Envío de una petición válida con texto y estrategia. Se verifica que la respuesta contiene los campos esperados: \texttt{is\_sexist}, \texttt{confidence}, \texttt{text} y \texttt{explanation}. \\ \hline
+
+PI-02 & \texttt{POST /api/analyze} & Envío de una petición con texto vacío. Se verifica que el servidor devuelve un código de estado HTTP 400 y un mensaje de error descriptivo. \\ \hline
+
+PI-03 & \texttt{POST /api/analyze} & Simulación de un entorno donde el modelo clasificador no está cargado. Se verifica que el servidor devuelve un código de estado HTTP 500 sin colapsar. \\ \hline
+
+PI-04 & \texttt{POST /api/analyze} & Verificación de que el servidor Flask se comunica correctamente con \texttt{utils.py} (módulo clasificador) y \texttt{prompts.py} (módulo de prompts), y que la respuesta JSON es parseable. \\ \hline
+
+\end{tabular}
+\end{table}
+
+Para las pruebas de integración se utilizó la técnica de \textit{mocking} (simulación), reemplazando las llamadas reales a los modelos de IA por objetos simulados (\texttt{unittest.mock.patch}). Esto permite verificar la lógica de la aplicación sin necesidad de cargar los modelos en memoria (lo cual requiere GPU y un tiempo de carga de varios segundos) ni de disponer de conexión al servidor del LLM.
+
+\subsubsection{Pruebas de Sistema y Aceptación}
+
+Las pruebas de sistema validan el comportamiento del sistema completo desde la perspectiva del usuario final, incluyendo la interfaz gráfica y la interacción con todos los componentes.
+
+\begin{table}[H]
+\centering
+\caption{Pruebas de sistema realizadas}
+\label{tab:pruebas-sistema}
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Escenario} & \textbf{Resultado esperado} \\ \hline
+
+PS-01 & El usuario pulsa ``Analizar'' sin introducir texto. & El frontend muestra el mensaje ``Por favor, introduce un texto para analizar'' y no envía la petición al servidor. \\ \hline
+
+PS-02 & El usuario introduce un texto sexista y selecciona la estrategia few-shot. & Se muestra el badge ``SEXISTA'' en rojo, la barra de confianza, la explicación y la contranarrativa. \\ \hline
+
+PS-03 & El usuario introduce un texto no sexista. & Se muestra el badge ``NO SEXISTA'' en verde, un mensaje de confirmación y la explicación de por qué no es sexista. \\ \hline
+
+PS-04 & Se accede a la aplicación desde un dispositivo móvil. & La interfaz se adapta correctamente al ancho de pantalla, manteniendo la legibilidad y la funcionalidad. \\ \hline
+
+PS-05 & El servidor del LLM no está disponible. & Se muestra la clasificación y la confianza, con un mensaje informativo indicando que la explicación no está disponible. \\ \hline
+
+\end{tabular}
+\end{table}
+
+Estas pruebas se realizaron de forma manual durante el proceso de desarrollo, verificando cada escenario directamente en el navegador web. Las pruebas PS-01, PS-02 y PS-03 se ejecutaron en múltiples navegadores (Chrome, Firefox) para asegurar la compatibilidad. La prueba PS-04 se verificó utilizando las herramientas de simulación de dispositivos móviles integradas en las DevTools de Chrome.
+
+\subsubsection{Ejecución de las pruebas automatizadas}
+
+Las pruebas unitarias y de integración pueden ejecutarse mediante el siguiente comando:
+
+\begin{verbatim}
+cd web_app
+python -m pytest tests/ -v
+\end{verbatim}
+
+El framework pytest descubre y ejecuta automáticamente todos los ficheros de test del directorio \texttt{tests/}, mostrando un informe detallado con el resultado de cada prueba individual.

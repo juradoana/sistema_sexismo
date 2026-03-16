@@ -51,13 +51,14 @@ def cargar_exist_2023(ruta_archivo):
         texto = entry.get('tweet')
         
         # 3. Gestión de etiquetas (Voto por Mayoría)
-        labels = entry.get('labels_task1', [])
+        labels = entry.get('labels_task1', []) # se extraen las etiquetas de los anotadores
         
         if not labels:
             continue 
-            
+
+        #se cuentan los votos            
         conteo = Counter(labels)
-        voto_mayoria = conteo.most_common(1)[0][0] # 'YES' o 'NO'
+        voto_mayoria = conteo.most_common(1)[0][0] # se elige la etiqueta más votada ('YES' o 'NO')
         
         # Convertir a formato 2021 ('sexist' / 'non-sexist')
         etiqueta_final = 'sexist' if voto_mayoria == 'YES' else 'non-sexist'
@@ -75,7 +76,6 @@ def cargar_exist_2023(ruta_archivo):
 # 3. Ejecución Principal
 # ---------------------------------------------------------
 
-# ¡IMPORTANTE! CAMBIA ESTAS RUTAS POR LAS DE TUS ARCHIVOS
 archivo_2021 = 'dataset_entrenamiento/EXIST2021_training.tsv' 
 archivo_2023 = 'dataset_entrenamiento/EXIST2023_training.json'
 

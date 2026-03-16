@@ -1,0 +1,17 @@
+# === Aplicación Web (web_app/) ===
+flask
+omegaconf
+json_repair
+openai
+torch
+transformers
+requests
+pyyaml
+
+# === Preprocesamiento y entrenamiento ===
+pandas
+numpy
+scikit-learn
+
+# === Testing ===
+pytest
