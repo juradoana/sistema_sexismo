@@ -15,8 +15,6 @@ El sistema funciona en dos fases:
 
 Todo se expone a través de una **interfaz web Flask** donde el usuario puede analizar textos de forma interactiva.
 
----
-
 ## 📁 Estructura del Repositorio
 
 ```
@@ -25,26 +23,14 @@ sistema_basico/
 ├── web_app/                   # 🌐 Aplicación web (Flask)
 │   ├── app.py                 #     Servidor y endpoints API
 │   ├── utils.py               #     Clasificador RoBERTa + wrapper LLM
-│   ├── prompts.py             #     Prompts para Gemma (0-shot, 1-shot, few-shot)
+│   ├── prompts.py             #     Prompts para Gemma
 │   ├── templates/             #     HTML de la interfaz
 │   ├── static/                #     CSS, JS e imágenes
-│   ├── tests/                 #     Tests unitarios (pytest)
-│   └── *.md                   #     Documentación técnica y de despliegue
+│   └── tests/                 #     Tests unitarios (pytest)
 │
-├── encoder/                   # Entrenamiento y evaluación del modelo RoBERTa-BNE
-├── estrategias/               # Estrategias ML (TF-IDF, Logistic Regression, Random Forest)
-├── modelos/                   # Scripts para Gemma y contranarrativas
-├── evaluaciones/              # Evaluación del modelo Gemma
-├── graficas/                  # Matrices de confusión (imágenes)
-│
-├── detector_basico.py         # Detector inicial de prueba
-├── dataset_limpio.py          # Limpieza de datasets
-├── unir_datos.py              # Unificación de datasets EXIST
-├── plan_pruebas.tex           # Plan de pruebas (LaTeX)
-│
+├── README.md                  # Documentación principal
 ├── requirements.txt           # Dependencias del proyecto
-├── config.example.py          # Plantilla de configuración (sin credenciales)
-├── personal_config.yaml.example  # Plantilla de config YAML (sin credenciales)
+├── personal_config.yaml.example # Plantilla de configuración
 └── .gitignore
 ```
 
