@@ -12,6 +12,7 @@ personal_config.yaml
 run_app.bat
 run_ngrok.bat
 ngrok.exe
+web_app/*.md
 
 # --- MATERIAL NO RELACIONADO O INVESTIGACIÓN ---
 # (Se excluyen porque solo queremos subir la web_app)
