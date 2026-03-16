@@ -96,7 +96,7 @@ huggingface-cli download anajurado/roberta-bne-sexism-detection --local-dir fina
 
 También puedes descargarlo manualmente desde: **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
 
-> Si quieres re-entrenar el modelo, usa `encoder/entrenamiento_modelo.py` con los datasets EXIST.
+> **Nota:** Para re-entrenar el modelo o ver los experimentos de investigación, consulta la rama de desarrollo o contacta con su autora.
 
 ### 5. Ejecutar la aplicación
 
@@ -126,13 +126,8 @@ El modelo es un **RoBERTa-BNE** fine-tuned sobre datos del shared task EXIST (20
 
 👉 **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
 
-### Datasets
 
-Los datos proceden del shared task **EXIST** (sEXism Identification in Social neTworks):
-- [EXIST 2021](http://nlp.uned.es/exist2021/)
-- [EXIST 2023](http://nlp.uned.es/exist2023/)
-
-Los datasets no se incluyen por restricciones de tamaño y licencia. Descárgalos desde las páginas oficiales y colócalos en `dataset_entrenamiento/`.
+Los datasets no se incluyen por restricciones de tamaño y licencia. Descárgalos desde las páginas oficiales para realizar tus propios experimentos.
 
 ---
 
