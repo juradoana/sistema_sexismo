@@ -1,137 +1,79 @@
 # 🛡️ Sistema de Detección de Sexismo en Texto
 
-Sistema híbrido que combina un **clasificador RoBERTa-BNE** (fine-tuned) con el modelo **Gemma 3 12B** para detectar contenido sexista en español, generar explicaciones y proponer contranarrativas.
+> **Trabajo de Fin de Grado** — Universidad de Jaén  
+> Autora: Ana Jurado
 
-> **Trabajo de Fin de Grado** — Universidad de Jaén
-
----
-
-## 📋 Descripción
-
-El sistema funciona en dos fases:
-
-1. **Clasificación automática**: Un modelo RoBERTa-BNE entrenado sobre el dataset [EXIST](http://nlp.uned.es/exist/) clasifica el texto como *sexista* o *no sexista*, devolviendo una puntuación de confianza.
-2. **Explicación con LLM**: Si el texto es sexista, Gemma genera una explicación del sesgo detectado y propone una contranarrativa. Si no lo es, explica por qué el texto es respetuoso.
-
-Todo se expone a través de una **interfaz web Flask** donde el usuario puede analizar textos de forma interactiva.
-
-## 📁 Estructura del Repositorio
-
-```
-sistema_basico/
-│
-├── web_app/                   # 🌐 Aplicación web (Flask)
-│   ├── app.py                 #     Servidor y endpoints API
-│   ├── utils.py               #     Clasificador RoBERTa + wrapper LLM
-│   ├── prompts.py             #     Prompts para Gemma
-│   ├── templates/             #     HTML de la interfaz
-│   ├── static/                #     CSS, JS e imágenes
-│   └── tests/                 #     Tests unitarios (pytest)
-│
-├── README.md                  # Documentación principal
-├── requirements.txt           # Dependencias del proyecto
-├── personal_config.yaml.example # Plantilla de configuración
-└── .gitignore
-```
-
-> **Nota:** Los datasets y el modelo entrenado no se incluyen en el repositorio por su tamaño. Ver la sección [Modelo y Datos](#-modelo-y-datos) para instrucciones.
+Sistema híbrido que combina un **clasificador RoBERTa-BNE** (fine-tuned) con el modelo generativo **Gemma 3 12B** para detectar contenido sexista en español, generar explicaciones del sesgo detectado y proponer contranarrativas constructivas.
 
 ---
 
-## 🚀 Instalación y Ejecución
+## 📋 ¿Qué hace este sistema?
 
-### 1. Clonar el repositorio
+El sistema analiza textos en español y determina si contienen lenguaje sexista. Funciona en dos fases:
 
-```bash
-git clone https://github.com/TU_USUARIO/sistema_basico.git
-cd sistema_basico
-```
+### Fase 1 — Clasificación automática (RoBERTa-BNE)
+Un modelo [RoBERTa-BNE](https://huggingface.co/PlanTL-GOB-ES/roberta-base-bne) fine-tuned sobre datos del shared task [EXIST](http://nlp.uned.es/exist/) (2021 + 2023) clasifica el texto como **sexista** o **no sexista**, devolviendo una puntuación de confianza (0 a 1).
 
-### 2. Crear entorno virtual e instalar dependencias
+### Fase 2 — Explicación con LLM (Gemma 3 12B)
+Si el texto es clasificado como sexista, el modelo Gemma genera:
+- Una **explicación** de por qué la frase es sexista.
+- Una **contranarrativa** que responde al discurso de forma educativa y constructiva.
 
-```bash
-python -m venv venv
-source venv/bin/activate       # En Windows: venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-### 3. Configurar credenciales
-
-```bash
-cp personal_config.yaml.example personal_config.yaml
-```
-
-Edita `personal_config.yaml` según tu situación:
-
-**Si tienes acceso al servidor de la UJA:**
-```yaml
-llm_api:
-  api_key: "tu_api_key_uja"
-  model: "/mnt/beegfs/sinai-data/google/gemma-3-12b-it"
-  base_url: "http://ada01.ujaen.es:8080/v1"
-```
-
-**Si eres usuario externo** (usa [Google AI Studio](https://aistudio.google.com/) — gratis):
-```yaml
-llm_api:
-  api_key: "tu_api_key_de_google"
-  model: "gemma-3-12b-it"
-  base_url: "https://generativelanguage.googleapis.com/v1beta/openai"
-```
-
-> **Nota:** Si no configuras las credenciales, la aplicación funciona igualmente — solo la clasificación de RoBERTa, sin las explicaciones de Gemma.
-
-### 4. Obtener el modelo clasificador
-
-Descarga el modelo desde Hugging Face y colócalo en la carpeta `final_model/`:
-
-```bash
-# Opción 1: Con git (requiere git-lfs)
-git clone https://huggingface.co/anajurado/roberta-bne-sexism-detection final_model
-
-# Opción 2: Con la CLI de Hugging Face
-pip install huggingface_hub
-huggingface-cli download anajurado/roberta-bne-sexism-detection --local-dir final_model
-```
-
-También puedes descargarlo manualmente desde: **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
-
-> **Nota:** Para re-entrenar el modelo o ver los experimentos de investigación, consulta la rama de desarrollo o contacta con su autora.
-
-### 5. Ejecutar la aplicación
-
-```bash
-cd web_app
-python app.py
-```
-
-Abre tu navegador en **http://127.0.0.1:8000**
+Si el texto es clasificado como no sexista, Gemma explica por qué la frase es respetuosa.
 
 ---
 
-## 🧪 Tests
+## 🏗️ Arquitectura del Sistema
 
-```bash
-cd web_app
-python -m pytest tests/ -v
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Interfaz Web (Flask)                  │
+│              HTML + CSS + JavaScript                    │
+└──────────────────────┬──────────────────────────────────┘
+                       │ POST /api/analyze
+                       ▼
+┌──────────────────────────────────────────────────────────┐
+│                  Pipeline Híbrido                        │
+│                                                          │
+│  ┌─────────────────────┐    ┌──────────────────────────┐ │
+│  │  RoBERTa-BNE        │    │  Gemma 3 12B (LLM)      │ │
+│  │  (Clasificación     │───▶│  (Explicación +          │ │
+│  │   binaria)          │    │   Contranarrativa)       │ │
+│  └─────────────────────┘    └──────────────────────────┘ │
+└──────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📊 Modelo y Datos
+## 🔬 Componentes del Proyecto
 
-### Modelo clasificador
+### 🌐 `web_app/` — Aplicación Web
+Interfaz interactiva desarrollada con **Flask** donde el usuario introduce un texto y recibe el análisis completo. Incluye:
+- **`app.py`** — Servidor Flask con el endpoint `/api/analyze` que orquesta el pipeline completo.
+- **`utils.py`** — Wrapper para la API del LLM (`LLMApi`) y el clasificador local (`SexismClassifier`).
+- **`prompts.py`** — Prompts estructurados con estrategias de *In-context Learning*:
+  - **0-shot**: Sin ejemplos, el modelo genera la respuesta directamente.
+  - **1-shot**: Un ejemplo de referencia para guiar al modelo.
+  - **Few-shot**: 5 ejemplos variados (sexismo hostil, benevolente, mansplaining, asimetría lingüística...).
+- **`tests/`** — Tests de integración con `pytest` y mocking (sin necesidad de GPU ni conexión al LLM).
 
-El modelo es un **RoBERTa-BNE** fine-tuned sobre datos del shared task EXIST (2021 + 2023). Está disponible en Hugging Face:
+### 🤖 `encoder/` — Entrenamiento del Modelo RoBERTa-BNE
+- **`entrenamiento_modelo.py`** — Script de fine-tuning del modelo RoBERTa-BNE sobre los datasets EXIST.
+- **`evaluar.py`** — Evaluación del modelo con métricas de rendimiento.
 
-👉 **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
+### 🧪 `estrategias/` — Experimentos de ML Clásico
+Scripts de experimentación con técnicas clásicas de Machine Learning, usados como baseline para comparar con el modelo deep learning:
+- **TF-IDF** como método de representación textual.
+- **Logistic Regression** y **Random Forest** como clasificadores.
 
-
-Los datasets no se incluyen por restricciones de tamaño y licencia. Descárgalos desde las páginas oficiales para realizar tus propios experimentos.
+### 🧠 `modelos/` — Módulos del LLM
+- **`llm_api.py`** — Cliente para comunicarse con el servidor de Gemma (compatible con API de OpenAI).
+- **`contranarrativa.py`** — Generación de contranarrativas mediante el LLM.
+- **`modelo_gemma.py`** — Integración completa con el modelo Gemma.
 
 ---
 
-## 🛠️ Tecnologías
+## 🛠️ Tecnologías Utilizadas
 
 | Componente | Tecnología |
 |---|---|
@@ -139,11 +81,58 @@ Los datasets no se incluyen por restricciones de tamaño y licencia. Descárgalo
 | LLM | Gemma 3 12B (API OpenAI-compatible) |
 | Backend web | Flask |
 | Frontend | HTML + CSS + JavaScript |
-| ML clásico | scikit-learn (TF-IDF, LR, Random Forest) |
+| ML clásico | scikit-learn (TF-IDF, Logistic Regression, Random Forest) |
+| Gestión de prompts | In-context Learning (0-shot, 1-shot, few-shot) |
+| Testing | pytest con mocking |
 | Datos | EXIST 2021, EXIST 2023 |
+
+---
+
+## 📊 Modelo Clasificador
+
+El modelo RoBERTa-BNE fine-tuned está disponible públicamente en Hugging Face:
+
+👉 **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
+
+Ha sido entrenado sobre datos del shared task EXIST (ediciones 2021 y 2023), que contienen textos reales en español etiquetados como sexistas o no sexistas.
+
+---
+
+## 📁 Estructura del Repositorio
+
+```
+sistema_sexismo/
+│
+├── web_app/                       # 🌐 Aplicación web completa
+│   ├── app.py                     #     Servidor Flask y endpoints
+│   ├── utils.py                   #     Clasificador RoBERTa + wrapper LLM
+│   ├── prompts.py                 #     Prompts (0-shot, 1-shot, few-shot)
+│   ├── templates/index.html       #     Interfaz de usuario
+│   ├── static/                    #     CSS, JS e imágenes
+│   └── tests/test_app.py          #     Tests de integración
+│
+├── encoder/                       # 🤖 Entrenamiento y evaluación del modelo
+│   ├── entrenamiento_modelo.py
+│   └── evaluar.py
+│
+├── estrategias/                   # 🧪 Experimentos ML clásico (baselines)
+│   ├── logisticRegression.py
+│   ├── randomForest.py
+│   └── tf_idf.py
+│
+├── modelos/                       # 🧠 Módulos de integración con Gemma
+│   ├── llm_api.py
+│   ├── contranarrativa.py
+│   └── modelo_gemma.py
+│
+├── README.md
+├── LICENSE
+├── requirements.txt
+└── personal_config.yaml.example
+```
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto forma parte de un Trabajo de Fin de Grado y se comparte con fines académicos.
+Este proyecto se distribuye bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
