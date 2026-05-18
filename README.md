@@ -22,6 +22,9 @@ Si el texto es clasificado como sexista, el modelo Gemma genera:
 Si el texto es clasificado como no sexista, Gemma explica por qué la frase es respetuosa.
 
 ---
+## Demostración de Uso
+
+<video src="assets/demo.mp4" width="100%" controls></video>
 
 ##  Arquitectura del Sistema
 
