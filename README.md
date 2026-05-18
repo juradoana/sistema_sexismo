@@ -24,7 +24,11 @@ Si el texto es clasificado como no sexista, Gemma explica por qué la frase es r
 ---
 ## Demostración de Uso
 
-<video src="assets/demo.mp4" width="100%" controls></video>
+<p align="center">
+  <video src="assets/demo.mp4" controls="controls" style="max-width: 100%;">
+    Tu navegador no soporta la reproducción de vídeos.
+  </video>
+</p>
 
 ##  Arquitectura del Sistema
 
