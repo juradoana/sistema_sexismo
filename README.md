@@ -1,4 +1,4 @@
-# 🛡️ Sistema de Detección de Sexismo en Texto
+#  Sistema de Detección de Sexismo en Texto
 
 > **Trabajo de Fin de Grado** — Universidad de Jaén  
 > Autora: Ana Jurado
@@ -7,7 +7,7 @@ Sistema híbrido que combina un **clasificador RoBERTa-BNE** (fine-tuned) con el
 
 ---
 
-## 📋 ¿Qué hace este sistema?
+##  ¿Qué hace este sistema?
 
 El sistema analiza textos en español y determina si contienen lenguaje sexista. Funciona en dos fases:
 
@@ -23,7 +23,7 @@ Si el texto es clasificado como no sexista, Gemma explica por qué la frase es r
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+##  Arquitectura del Sistema
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -45,7 +45,7 @@ Si el texto es clasificado como no sexista, Gemma explica por qué la frase es r
 
 ---
 
-## 🔬 Componentes del Proyecto
+## Componentes del Proyecto
 
 ### 🌐 `web_app/` — Aplicación Web
 Interfaz interactiva desarrollada con **Flask** donde el usuario introduce un texto y recibe el análisis completo. Incluye:
@@ -55,13 +55,12 @@ Interfaz interactiva desarrollada con **Flask** donde el usuario introduce un te
   - **0-shot**: Sin ejemplos, el modelo genera la respuesta directamente.
   - **1-shot**: Un ejemplo de referencia para guiar al modelo.
   - **Few-shot**: 5 ejemplos variados (sexismo hostil, benevolente, mansplaining, asimetría lingüística...).
-- **`tests/`** — Tests de integración con `pytest` y mocking (sin necesidad de GPU ni conexión al LLM).
 
 ### 🤖 `encoder/` — Entrenamiento del Modelo RoBERTa-BNE
 - **`entrenamiento_modelo.py`** — Script de fine-tuning del modelo RoBERTa-BNE sobre los datasets EXIST.
 - **`evaluar.py`** — Evaluación del modelo con métricas de rendimiento.
 
-### 🧪 `estrategias/` — Experimentos de ML Clásico
+### `estrategias/` — Experimentos de ML Clásico
 Scripts de experimentación con técnicas clásicas de Machine Learning, usados como baseline para comparar con el modelo deep learning:
 - **TF-IDF** como método de representación textual.
 - **Logistic Regression** y **Random Forest** como clasificadores.
@@ -78,12 +77,11 @@ Scripts de experimentación con técnicas clásicas de Machine Learning, usados 
 | Componente | Tecnología |
 |---|---|
 | Clasificador | RoBERTa-BNE (Hugging Face Transformers) |
-| LLM | Gemma 3 12B (API OpenAI-compatible) |
+| LLM | Gemma 3 12B |
 | Backend web | Flask |
 | Frontend | HTML + CSS + JavaScript |
 | ML clásico | scikit-learn (TF-IDF, Logistic Regression, Random Forest) |
 | Gestión de prompts | In-context Learning (0-shot, 1-shot, few-shot) |
-| Testing | pytest con mocking |
 | Datos | EXIST 2021, EXIST 2023 |
 
 ---
@@ -92,7 +90,7 @@ Scripts de experimentación con técnicas clásicas de Machine Learning, usados 
 
 El modelo RoBERTa-BNE fine-tuned está disponible públicamente en Hugging Face:
 
-👉 **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
+ **[anajurado/roberta-bne-sexism-detection](https://huggingface.co/anajurado/roberta-bne-sexism-detection)**
 
 Ha sido entrenado sobre datos del shared task EXIST (ediciones 2021 y 2023), que contienen textos reales en español etiquetados como sexistas o no sexistas.
 
@@ -109,30 +107,22 @@ sistema_sexismo/
 │   ├── prompts.py                 #     Prompts (0-shot, 1-shot, few-shot)
 │   ├── templates/index.html       #     Interfaz de usuario
 │   ├── static/                    #     CSS, JS e imágenes
-│   └── tests/test_app.py          #     Tests de integración
 │
 ├── encoder/                       # 🤖 Entrenamiento y evaluación del modelo
 │   ├── entrenamiento_modelo.py
 │   └── evaluar.py
 │
 ├── estrategias/                   # 🧪 Experimentos ML clásico (baselines)
-│   ├── logisticRegression.py
-│   ├── randomForest.py
 │   └── tf_idf.py
 │
-├── modelos/                       # 🧠 Módulos de integración con Gemma
+├── modelos/                     
 │   ├── llm_api.py
-│   ├── contranarrativa.py
 │   └── modelo_gemma.py
 │
 ├── README.md
-├── LICENSE
 ├── requirements.txt
-└── personal_config.yaml.example
+
 ```
 
 ---
 
-## 📄 Licencia
-
-Este proyecto se distribuye bajo la licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
