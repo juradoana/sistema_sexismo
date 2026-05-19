@@ -108,7 +108,7 @@ Ha sido entrenado sobre datos del shared task EXIST (ediciones 2021 y 2023), que
 ```
 sistema_sexismo/
 │
-├── web_app/                       # 🌐 Aplicación web completa
+├── web_app/                       # 🌐 Aplicación web 
 │   ├── app.py                     #     Servidor Flask y endpoints
 │   ├── utils.py                   #     Clasificador RoBERTa + wrapper LLM
 │   ├── prompts.py                 #     Prompts (0-shot, 1-shot, few-shot)
