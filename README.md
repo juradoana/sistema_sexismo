@@ -25,8 +25,15 @@ Si el texto es clasificado como no sexista, Gemma explica por qué la frase es r
 
 ## 📺 Demostración de Uso
 
-[![Haz clic para ver el vídeo de la demo](./assets/sistema.png)](./assets/demo.mp4)
+## 📺 Demostración de Uso
 
+<p align="center">
+  <a href="./assets/demo.mp4">
+    <img src="./assets/sistema.png" alt="Detector de Sexismo" width="60%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  </a>
+  <br>
+  <em>ℹ️ Haz clic en la imagen de arriba o <a href="./assets/demo.mp4"><strong>aquí</strong></a> para reproducir el vídeo completo de la demo.</em>
+</p>
 
 ##  Arquitectura del Sistema
 
