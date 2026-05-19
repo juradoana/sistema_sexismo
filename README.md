@@ -25,7 +25,7 @@ Si el texto es clasificado como no sexista, Gemma explica por qué la frase es r
 
 ## 📺 Demostración de Uso
 
-[![Haz clic para ver el vídeo de la demo](./assets/miniatura.png)](./assets/demo.mp4)
+[![Haz clic para ver el vídeo de la demo](./assets/sistema.png)](./assets/demo.mp4)
 
 
 ##  Arquitectura del Sistema
