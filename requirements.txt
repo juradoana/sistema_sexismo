@@ -12,6 +12,3 @@ pyyaml
 pandas
 numpy
 scikit-learn
-
-# === Testing ===
-pytest
